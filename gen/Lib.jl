@@ -6,7 +6,7 @@ if isdir(hakushin_data_dir)
     ZZZ_HAKUSHIN_DATA_DIR = hakushin_data_dir
 else
     if haskey(ENV, "CI")
-        run(Cmd(`git clone https://github.com/Genshin-Optimizer/zzz-hakushin-data.git gen/zzz-hakushin-data`))
+        run(Cmd(`git clone --depth=1 https://github.com/Genshin-Optimizer/zzz-hakushin-data.git gen/zzz-hakushin-data`))
         ZZZ_HAKUSHIN_DATA_DIR = normpath(@__DIR__, "zzz-hakushin-data")
     else
         printstyled("need zzz-hakushin-data\n", color = :red)
