@@ -12,12 +12,26 @@ function load(x::T)::Union{Nothing, NamedTuple} where T
     end
 end
 
+using LogicalOperators: AND, OR, AbstractLogicalOperator
+
 struct ZzzQuery{T}
+    logical::AbstractLogicalOperator
 end
+
+parseInt(sym::Symbol) = parse(Int, String(sym))
 
 function findall(query::ZzzQuery{T}) where T
     tbl = cached(T)
-    tbl
+    Id_syms = Base.findall(tbl) do c
+        if query.logical isa AND
+            all(f -> f(c), query.logical.elements)
+        elseif query.logical isa OR
+            any(f -> f(c), query.logical.elements)
+        end
+    end
+    map(Id_syms) do sym
+        T(Id = parseInt(sym))
+    end
 end
 
 _tbl_dict = Dict{Type, NamedTuple}()
@@ -37,19 +51,33 @@ function cached(::Type{T}) where T
     end
 end
 
-using ..ZZZTools: WeaponType, ElementType
+using ..ZZZTools: WeaponType, ElementType, HitType
 using ..ZZZTools: Character
 
-function Base.in(prop::NTuple{N, Union{WeaponType, ElementType}}, ::Type{T})::ZzzQuery{T} where {N, T}
-    ZzzQuery{T}()
+function Base.in(and::AND, ::Type{T})::ZzzQuery{T} where T
+    conds = map(and.elements) do el
+        only(Base.in(el, T).logical.elements)
+    end
+    ZzzQuery{T}(AND(conds...))
 end
 
-function Base.in(prop::WeaponType, ::Type{T})::ZzzQuery{T} where T
-    ZzzQuery{T}()
+function Base.in(or::OR, ::Type{T})::ZzzQuery{T} where T
+    conds = map(or.elements) do el
+        only(Base.in(el, T).logical.elements)
+    end
+    ZzzQuery{T}(OR(conds...))
 end
 
-function Base.in(prop::ElementType, ::Type{T})::ZzzQuery{T} where T
-    ZzzQuery{T}()
+function Base.in(weapon::WeaponType, ::Type{T})::ZzzQuery{T} where T
+    ZzzQuery{T}(AND((c::NamedTuple) -> c.type == UInt8(weapon)))
+end
+
+function Base.in(element::ElementType, ::Type{T})::ZzzQuery{T} where T
+    ZzzQuery{T}(AND((c::NamedTuple) -> c.element == UInt8(element)))
+end
+
+function Base.in(hit::HitType, ::Type{T})::ZzzQuery{T} where T
+    ZzzQuery{T}(AND((c::NamedTuple) -> c.hit == UInt8(hit)))
 end
 
 end # module ZZZTools.Eridu

@@ -4,9 +4,15 @@ version = "0.1.0"
 authors = ["WooKyoung Noh <wookay.noh@gmail.com>"]
 
 [deps]
+LogicalOperators = "6ac76662-4673-4d6a-8390-a82adc3670cf"
 JSON2 = "2535ab7d-5cd8-5a07-80ac-9b1792aadce3"
 
+[sources]
+LogicalOperators = {url = "https://github.com/wookay/LogicalOperators.jl", rev = "main"}
+
 [compat]
+julia = "1.6"
+LogicalOperators = "0.1"
 JSON2 = "0.3"
 
 [extras]
