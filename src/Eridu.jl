@@ -12,13 +12,10 @@ function load(x::T)::Union{Nothing, NamedTuple} where T
     end
 end
 
-using LogicalOperators: AND, OR, AbstractLogicalOperator
-
-struct ZzzQuery{T}
-    logical::AbstractLogicalOperator
-end
-
 parseInt(sym::Symbol) = parse(Int, String(sym))
+
+using ..ZZZTools: ZzzQuery
+using ..ZZZTools: AbstractLogicalOperator, AND, OR
 
 function findall(query::ZzzQuery{T}) where T
     tbl = cached(T)

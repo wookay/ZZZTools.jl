@@ -1,5 +1,11 @@
 # module ZZZTools
 
+using LogicalOperators: AbstractLogicalOperator, AND, OR
+
+struct ZzzQuery{T}
+    logical::AbstractLogicalOperator
+end
+
 export WeaponType, Attack, Stun, Anomaly, Support, Defense
 @enum WeaponType::UInt8 begin
     Attack  = 1
@@ -25,27 +31,29 @@ export ElementType, Physical, Fire, Ice, Electric, Ether
     Ether    = 205
 end
 
-struct Bangboo
+abstract type ZzzAsset end
+
+struct Bangboo <: ZzzAsset
     Id::Int
     Bangboo(; Id::Int) = new(Id)
 end
 
-struct Character
+struct Character <: ZzzAsset
     Id::Int
     Character(; Id::Int) = new(Id)
 end
 
-struct Equipment
+struct Equipment <: ZzzAsset
     Id::Int
     Equipment(; Id::Int) = new(Id)
 end
 
-struct Monster
+struct Monster <: ZzzAsset
     Id::Int
     Monster(; Id::Int) = new(Id)
 end
 
-struct Weapon
+struct Weapon <: ZzzAsset
     Id::Int
     Weapon(; Id::Int) = new(Id)
 end

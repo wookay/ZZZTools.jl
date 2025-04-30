@@ -2,12 +2,11 @@ module ZZZTools
 
 export Bangboo, Character, Equipment, Monster, Weapon
 include("types.jl")
+include("show.jl")
 
 export Eridu
 include("Eridu.jl")
 
-# LogicalOperators
-using .Eridu: AND, OR
-export AND, OR
+export AND, OR # LogicalOperators
 
 end # module ZZZTools
