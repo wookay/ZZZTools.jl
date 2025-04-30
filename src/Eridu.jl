@@ -54,18 +54,12 @@ end
 using ..ZZZTools: WeaponType, ElementType, HitType
 using ..ZZZTools: Character
 
-function Base.in(and::AND, ::Type{T})::ZzzQuery{T} where T
-    conds = map(and.elements) do el
+function Base.in(logical::AbstractLogicalOperator, ::Type{T})::ZzzQuery{T} where T
+    conds = map(logical.elements) do el
         only(Base.in(el, T).logical.elements)
     end
-    ZzzQuery{T}(AND(conds...))
-end
-
-function Base.in(or::OR, ::Type{T})::ZzzQuery{T} where T
-    conds = map(or.elements) do el
-        only(Base.in(el, T).logical.elements)
-    end
-    ZzzQuery{T}(OR(conds...))
+    Op = typeof(logical)
+    ZzzQuery{T}(Op.name.wrapper(conds...))
 end
 
 function Base.in(weapon::WeaponType, ::Type{T})::ZzzQuery{T} where T
