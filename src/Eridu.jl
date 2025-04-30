@@ -16,12 +16,13 @@ struct ZzzQuery{T}
 end
 
 function findall(query::ZzzQuery{T}) where T
-    cached_table(T)
+    tbl = cached(T)
+    tbl
 end
 
 _tbl_dict = Dict{Type, NamedTuple}()
 
-function cached_table(::Type{T}) where T
+function cached(::Type{T}) where T
     if haskey(_tbl_dict, T)
         return getindex(_tbl_dict, T)
     else
@@ -32,7 +33,7 @@ function cached_table(::Type{T}) where T
             return data
         else
             return nothing
-        end 
+        end
     end
 end
 

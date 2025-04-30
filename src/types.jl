@@ -1,7 +1,7 @@
 # module ZZZTools
 
 export WeaponType, Attack, Stun, Anomaly, Support, Defense
-@enum WeaponType begin
+@enum WeaponType::UInt8 begin
     Attack  = 1
     Stun    = 2
     Anomaly = 3
@@ -10,14 +10,14 @@ export WeaponType, Attack, Stun, Anomaly, Support, Defense
 end
 
 export HitType, Slash, Strike, Pierce
-@enum HitType begin
+@enum HitType::UInt8 begin
     Slash  = 101
     Strike = 102
     Pierce = 103
 end
 
 export ElementType, Physical, Fire, Ice, Electric, Ether
-@enum ElementType begin
+@enum ElementType::UInt8 begin
     Physical = 200
     Fire     = 201
     Ice      = 202
