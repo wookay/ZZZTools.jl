@@ -4,7 +4,7 @@ using Test
 using ZZZTools
 using Jive
 
-if false
+if haskey(ENV, "CI")
 f = sprint_colored
 println(join(f.((Physical, Fire, Ice, Electric, Ether)), ", "))
 (println ∘ f)(Character(Id = 1361))

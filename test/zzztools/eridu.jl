@@ -15,13 +15,13 @@ query = ZzzQuery{Character}(AND())
 
 # type = 2, element = 203, hit = 101
 anby = first(Eridu.cached(Character))
+@test anby.EN      == "Anby"
 @test anby.type    == UInt8(Stun)     # 2
 @test anby.element == UInt8(Electric) # 203
 @test anby.hit     == UInt8(Slash)    # 101
 @test WeaponType(anby.type)     == Stun     # 2
 @test ElementType(anby.element) == Electric # 203
 @test HitType(anby.hit)         == Slash    # 101
-@test anby.EN      == "Anby"
 
 pleniluna = Eridu.cached(Weapon)[Symbol("12001")]
 @test pleniluna.EN == "[Lunar] Pleniluna"
