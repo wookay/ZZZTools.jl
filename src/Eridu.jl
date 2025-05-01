@@ -16,6 +16,8 @@ parseInt(sym::Symbol) = parse(Int, String(sym))
 
 using ..ZZZTools: ZzzQuery, ZzzAsset
 using ..ZZZTools: AbstractLogicalOperator, AND, OR
+using ..ZZZTools: WeaponType, ElementType, HitType
+using ..ZZZTools: Character, Weapon, Monster, Equipment, Bangboo
 
 function findfirst(expr::Expr)::Union{Nothing, <: ZzzAsset}
     (var, T_sym) = expr.args[1].args
@@ -64,9 +66,7 @@ function cached(::Type{T}) where T <: ZzzAsset
     end
 end
 
-using ..ZZZTools: WeaponType, ElementType, HitType
-using ..ZZZTools: Character
-
+### Base.in
 function Base.in(logical::AbstractLogicalOperator, ::Type{T})::ZzzQuery{T} where T <: ZzzAsset
     conds = map(logical.elements) do el
         only(Base.in(el, T).logical.elements)
