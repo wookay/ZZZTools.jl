@@ -19,19 +19,41 @@ using ..ZZZTools: AbstractLogicalOperator, AND, OR
 using ..ZZZTools: WeaponType, ElementType, HitType
 using ..ZZZTools: Character, Weapon, Monster, Equipment, Bangboo
 
-function findfirst(expr::Expr)::Union{Nothing, <: ZzzAsset}
-    (var, T_sym) = expr.args[1].args
-    findfirst_expr = Expr(:call,
-        :(Base.findfirst),
-        Expr(:->, var, expr.args[2]),
-        Expr(:call, :(Eridu.cached), T_sym))
-    Id_sym::Union{Nothing, Symbol} = Core.eval(@__MODULE__, findfirst_expr)
+function _find_expr(f_expr::Expr, expr::Expr)::Tuple{Expr, Symbol}
+    @assert expr.head === :->
+    (var, T_sym) = expr.args[1].args  # c::Character
+    find_expr = Expr(:call,
+                     f_expr,
+                     Expr(:->, var, expr.args[2]), # c -> body
+                     Expr(:call, :(Eridu.cached), T_sym))
+    (find_expr, T_sym)
+end
+
+function _find(f_expr::Expr, expr::Expr)::Union{Nothing, <: ZzzAsset}
+    (find_expr, T_sym) = _find_expr(f_expr, expr)
+    Id_sym::Union{Nothing, Symbol} = Core.eval(@__MODULE__, find_expr)
     if Id_sym === nothing
         return nothing
     else
         T = getfield(Eridu, T_sym)
-        Id = parseInt(Id_sym)
-        return T(Id = Id)
+        return T(Id = parseInt(Id_sym))
+    end
+end
+
+function findfirst(expr::Expr)::Union{Nothing, <: ZzzAsset}
+    _find(:(Base.findfirst), expr)
+end
+
+function findlast(expr::Expr)::Union{Nothing, <: ZzzAsset}
+    _find(:(Base.findlast), expr)
+end
+
+function findall(expr::Expr)::Vector{<: ZzzAsset}
+    f_expr = :(Base.findall)
+    (find_expr, T_sym) = _find_expr(f_expr, expr)
+    T = getfield(Eridu, T_sym)
+    return map(Core.eval(@__MODULE__, find_expr)) do Id_sym
+        T(Id = parseInt(Id_sym))
     end
 end
 
@@ -44,8 +66,8 @@ function findall(query::ZzzQuery{T})::Vector{T} where T <: ZzzAsset
             any(f -> f(c), query.logical.elements)
         end
     end
-    map(Id_syms) do sym
-        T(Id = parseInt(sym))
+    map(Id_syms) do Id_sym
+        T(Id = parseInt(Id_sym))
     end
 end
 

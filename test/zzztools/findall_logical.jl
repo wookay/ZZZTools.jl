@@ -1,4 +1,4 @@
-module test_zzztools_eridu_findall
+module test_zzztools_eridu_findall_logical
 
 using Test
 using ZZZTools
@@ -19,4 +19,4 @@ agents = Eridu.findall(AND(Stun, Fire) in Character)
 @test length(agents) == 2
 @test last(agents) == Character(Id = 1161)
 
-end # module test_zzztools_eridu_findall
+end # module test_zzztools_eridu_findall_logical
