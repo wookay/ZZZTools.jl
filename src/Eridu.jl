@@ -5,14 +5,14 @@ include(normpath(@__DIR__, "../gen/Lib.jl"))
 function load(x::T)::Union{Nothing, NamedTuple} where T
     path = normpath(ZZZ_HAKUSHIN_DATA_DIR, lowercase(String(nameof(T))), string(x.Id, ".json"))
     if isfile(path)
-        data = json_read(path)
+        data = json_read_path(path)
         data
     else
         nothing
     end
 end
 
-parseInt(sym::Symbol) = parse(Int, String(sym))
+parseInt(sym::Symbol)::Int = parse(Int, String(sym))
 
 using ..ZZZTools: ZzzQuery, ZzzAsset
 using ..ZZZTools: AbstractLogicalOperator, AND, OR
@@ -71,15 +71,15 @@ function findall(query::ZzzQuery{T})::Vector{T} where T <: ZzzAsset
     end
 end
 
-_tbl_dict = Dict{Type, NamedTuple}()
+_tbl_dict = Dict{Type{<: ZzzAsset}, NamedTuple}()
 
-function cached(::Type{T}) where T <: ZzzAsset
+function cached(::Type{T})::Union{Nothing, NamedTuple} where T <: ZzzAsset
     if haskey(_tbl_dict, T)
         return getindex(_tbl_dict, T)
     else
         path = normpath(ZZZ_HAKUSHIN_DATA_DIR, lowercase(string(nameof(T), ".json")))
         if isfile(path)
-            data = json_read(path)
+            data = json_read_path(path)
             setindex!(_tbl_dict, data, T)
             return data
         else

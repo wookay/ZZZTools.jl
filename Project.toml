@@ -4,8 +4,11 @@ version = "0.1.0"
 authors = ["WooKyoung Noh <wookay.noh@gmail.com>"]
 
 [deps]
+Markdown = "d6f4376e-aef5-505a-96c1-9c027394607a"
 LogicalOperators = "6ac76662-4673-4d6a-8390-a82adc3670cf"
 JSON2 = "2535ab7d-5cd8-5a07-80ac-9b1792aadce3"
+HypertextLiteral = "ac1192a8-f4b3-4bfe-ba22-af5b92cd3ab2"
+PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 
 [sources]
 LogicalOperators = {url = "https://github.com/wookay/LogicalOperators.jl", rev = "main"}
@@ -14,6 +17,8 @@ LogicalOperators = {url = "https://github.com/wookay/LogicalOperators.jl", rev =
 julia = "1.6"
 LogicalOperators = "0.1"
 JSON2 = "0.3"
+HypertextLiteral = "0.9"
+PlutoUI = "0.7"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
