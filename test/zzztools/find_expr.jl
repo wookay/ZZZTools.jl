@@ -5,8 +5,10 @@ using ZZZTools
 
 expr = :( c::Character -> c.EN == "Anby" )
 @test Eridu.findfirst(expr) == Character(Id = 1011)
-@test Eridu.findlast(expr)  == Character(Id = 1011)
-@test Eridu.findall(expr) == [Character(Id = 1011)]
+
+expr = :( c::Character -> c.EN in ("Anby", "Nicole") )
+@test Eridu.findlast(expr) == Character(Id = 1031)
+@test Eridu.findall(expr) == [Character(Id = 1011), Character(Id = 1031)]
 
 expr = :( c::Character -> c.EN == "Venti" )
 @test Eridu.findfirst(expr) === nothing
