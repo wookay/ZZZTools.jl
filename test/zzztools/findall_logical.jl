@@ -19,4 +19,13 @@ chars = Eridu.findall(AND(Stun, Fire) in Character)
 @test length(chars) == 2
 @test last(chars) == Character(Id = 1161)
 
+chars = Eridu.findall(Character)
+@test length(chars) >= 35
+
+discs = Eridu.findall(Equipment)
+@test length(discs) >= 18
+
+wengines = Eridu.findall(Weapon)
+@test length(wengines) >= 63
+
 end # module test_zzztools_eridu_findall_logical

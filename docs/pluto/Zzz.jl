@@ -22,11 +22,20 @@ md"""
 [![CI](https://github.com/wookay/ZZZTools.jl/actions/workflows/actions.yml/badge.svg)](https://github.com/wookay/ZZZTools.jl/actions/workflows/actions.yml)
 """
 
+# ╔═╡ 99c38352-21ab-4808-850f-7fac2e2f2415
+
+
 # ╔═╡ f12b422f-5d65-41e4-b59f-bf802c548a26
 Eridu.findall(Stun in Character)
 
 # ╔═╡ 321459d2-3225-4fe2-a4f8-890eecf55cb7
 Eridu.findfirst(:( c::Character -> c.EN == "Anby" ))
+
+# ╔═╡ a5b8cee1-6401-49e1-bfea-9dd97fd76ab0
+Eridu.findall(Anomaly in Weapon)
+
+# ╔═╡ b0428f62-1ff6-4a1f-8f0e-6233fd3d6fd4
+Eridu.findfirst(:( e::Equipment -> e.EN.name == "Woodpecker Electro" ))
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -333,7 +342,10 @@ version = "17.4.0+2"
 # ╟─23969c99-07ea-4160-ac47-291a727a73ad
 # ╟─ec18087a-a9a7-4494-b275-01294a5873fe
 # ╠═d433f9dc-ef37-4e59-a8d0-9d7bfd741b16
+# ╠═99c38352-21ab-4808-850f-7fac2e2f2415
 # ╠═f12b422f-5d65-41e4-b59f-bf802c548a26
 # ╠═321459d2-3225-4fe2-a4f8-890eecf55cb7
+# ╠═a5b8cee1-6401-49e1-bfea-9dd97fd76ab0
+# ╠═b0428f62-1ff6-4a1f-8f0e-6233fd3d6fd4
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002

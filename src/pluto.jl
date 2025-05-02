@@ -62,10 +62,10 @@ end
 function Base.show(io::IO, mime::MIME"text/html", equipment::Equipment)
     T = Equipment
     disc = Eridu.cached(T)[Symbol(equipment.Id)]
-    title = disk.EN.name
+    title = disc.EN.name
     dir_name = replace(title, " " => "")
     resource = GO.get_discs_circle(dir_name, title)
-    _show_html_asset(io, mime, c, resource)
+    _show_html_asset(io, mime, equipment, resource)
 end
 
 function Base.show(io::IO, mime::MIME"text/html", weapon::Weapon)

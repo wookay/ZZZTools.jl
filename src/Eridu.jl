@@ -19,6 +19,23 @@ using ..ZZZTools: AbstractLogicalOperator, AND, OR
 using ..ZZZTools: WeaponType, ElementType, HitType
 using ..ZZZTools: Character, Weapon, Monster, Equipment, Bangboo
 
+_tbl_dict = Dict{Type{<: ZzzAsset}, NamedTuple}()
+
+function cached(::Type{T})::Union{Nothing, NamedTuple} where T <: ZzzAsset
+    if haskey(_tbl_dict, T)
+        return getindex(_tbl_dict, T)
+    else
+        path = normpath(ZZZ_HAKUSHIN_DATA_DIR, lowercase(string(nameof(T), ".json")))
+        if isfile(path)
+            data = json_read_path(path)
+            setindex!(_tbl_dict, data, T)
+            return data
+        else
+            return nothing
+        end
+    end
+end
+
 function _find_expr(f_expr::Expr, expr::Expr)::Tuple{Expr, Symbol}
     @assert expr.head === :->
     (var, T_sym) = expr.args[1].args  # c::Character
@@ -71,20 +88,10 @@ function findall(query::ZzzQuery{T})::Vector{T} where T <: ZzzAsset
     end
 end
 
-_tbl_dict = Dict{Type{<: ZzzAsset}, NamedTuple}()
-
-function cached(::Type{T})::Union{Nothing, NamedTuple} where T <: ZzzAsset
-    if haskey(_tbl_dict, T)
-        return getindex(_tbl_dict, T)
-    else
-        path = normpath(ZZZ_HAKUSHIN_DATA_DIR, lowercase(string(nameof(T), ".json")))
-        if isfile(path)
-            data = json_read_path(path)
-            setindex!(_tbl_dict, data, T)
-            return data
-        else
-            return nothing
-        end
+function findall(::Type{T})::Vector{T} where T <: ZzzAsset
+    Id_syms = (collect ∘ keys ∘ cached)(T)
+    map(Id_syms) do Id_sym
+        T(Id = parseInt(Id_sym))
     end
 end
 
