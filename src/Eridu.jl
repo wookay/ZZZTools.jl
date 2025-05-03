@@ -36,14 +36,15 @@ function cached(::Type{T})::Union{Nothing, NamedTuple} where T <: ZzzAsset
     end
 end
 
+using Meringues # Recipe
+
 function _find_expr(f_expr::Expr, expr::Expr)::Tuple{Expr, Symbol}
-    @assert expr.head === :->
-    (var, T_sym) = expr.args[1].args  # c::Character
+    syrup = Recipe.dissolve(expr)
     find_expr = Expr(:call,
                      f_expr,
-                     Expr(:->, var, expr.args[2]), # c -> body
-                     Expr(:call, :(Eridu.cached), T_sym))
-    (find_expr, T_sym)
+                     syrup.starch,
+                     Expr(:call, :(Eridu.cached), syrup.slurry))
+    (find_expr, syrup.slurry)
 end
 
 function _find(f_expr::Expr, expr::Expr)::Union{Nothing, <: ZzzAsset}
