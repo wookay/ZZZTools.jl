@@ -51,18 +51,19 @@ function findall(sugar::Expr)::Vector{<: ZzzAsset}
     choco::Syrup = _find_expr(f_expr, sugar)
     (find_expr::Expr, T_sym::Symbol) = (choco.starch, choco.slurry)
     T = getfield(Eridu, T_sym)
-    return map(Core.eval(@__MODULE__, find_expr)) do Id_sym
+    return map(Core.eval(@__MODULE__, find_expr)) do Id_sym::Symbol
         T(Id = parseInt(Id_sym))
     end
 end
 
 function _find(f_expr::Expr, sugar::Expr)::Union{Nothing, <: ZzzAsset}
     choco::Syrup = _find_expr(f_expr, sugar)
-    (find_expr::Expr, T_sym::Symbol) = (choco.starch, choco.slurry)
+    find_expr::Expr = choco.starch
     Id_sym::Union{Nothing, Symbol} = Core.eval(@__MODULE__, find_expr)
     if Id_sym === nothing
         return nothing
     else
+        T_sym::Symbol = choco.slurry
         T = getfield(Eridu, T_sym)
         return T(Id = parseInt(Id_sym))
     end
@@ -77,15 +78,15 @@ function findlast(sugar::Expr)::Union{Nothing, <: ZzzAsset}
 end
 
 function findall(query::ZzzQuery{T})::Vector{T} where T <: ZzzAsset
-    ∀ = if query.logical isa AND
+    ∀::Function = if query.logical isa AND
         all
     elseif query.logical isa OR
         any
     else
         (_, _) -> false
     end
-    Id_syms = Base.findall(cached(T)) do c
-        λ = f -> f(c)
+    Id_syms = Base.findall(cached(T)) do c::NamedTuple
+        λ::Function = f -> f(c)
         ∀(λ, query.logical.elements)
     end
     map(Id_syms) do Id_sym::Symbol
@@ -103,9 +104,10 @@ end
 ### Base.in
 function Base.in(logical::AbstractLogicalOperator, ::Type{T})::ZzzQuery{T} where T <: ZzzAsset
     conds = map(logical.elements) do el
-        only(Base.in(el, T).logical.elements)
+        query::ZzzQuery{T} = Base.in(el, T)
+        only(query.logical.elements)
     end
-    Op = typeof(logical)
+    Op::Type{<: AbstractLogicalOperator} = typeof(logical)
     ZzzQuery{T}(Op.name.wrapper(conds...))
 end
 

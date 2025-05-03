@@ -54,7 +54,7 @@ function Base.show(io::IO, mime::MIME"text/html", c::Character)
     T = Character
     agent = Eridu.cached(T)[Symbol(c.Id)]
     title = agent.EN
-    dir_name = agent.EN
+    dir_name = title
     resource = GO.get_chars_interknot(dir_name, title)
     _show_html_asset(io, mime, c, resource)
 end
