@@ -3,10 +3,9 @@ module Eridu # ZZZTools
 include(normpath(@__DIR__, "../gen/Lib.jl"))
 
 function load(x::T)::Union{Nothing, NamedTuple} where T
-    path = normpath(ZZZ_HAKUSHIN_DATA_DIR, lowercase(String(nameof(T))), string(x.Id, ".json"))
+    path = normpath(ZZZ_HAKUSHIN_DATA_DIR, (lowercase ∘ String ∘ nameof)(T), string(x.Id, ".json"))
     if isfile(path)
-        data = json_read_path(path)
-        data
+        json_read_path(path)
     else
         nothing
     end
@@ -36,19 +35,30 @@ function cached(::Type{T})::Union{Nothing, NamedTuple} where T <: ZzzAsset
     end
 end
 
-using Meringues # Recipe
+using Meringues # Recipe Syrup
 
-function _find_expr(f_expr::Expr, expr::Expr)::Tuple{Expr, Symbol}
-    syrup = Recipe.dissolve(expr)
+function _find_expr(f_expr::Expr, sugar::Expr)::Syrup
+    syrup::Syrup = Recipe.dissolve(sugar)
     find_expr = Expr(:call,
                      f_expr,
                      syrup.starch,
                      Expr(:call, :(Eridu.cached), syrup.slurry))
-    (find_expr, syrup.slurry)
+    Syrup(find_expr, syrup.slurry)
 end
 
-function _find(f_expr::Expr, expr::Expr)::Union{Nothing, <: ZzzAsset}
-    (find_expr, T_sym) = _find_expr(f_expr, expr)
+function findall(sugar::Expr)::Vector{<: ZzzAsset}
+    f_expr = :(Base.findall)
+    choco::Syrup = _find_expr(f_expr, sugar)
+    (find_expr::Expr, T_sym::Symbol) = (choco.starch, choco.slurry)
+    T = getfield(Eridu, T_sym)
+    return map(Core.eval(@__MODULE__, find_expr)) do Id_sym
+        T(Id = parseInt(Id_sym))
+    end
+end
+
+function _find(f_expr::Expr, sugar::Expr)::Union{Nothing, <: ZzzAsset}
+    choco::Syrup = _find_expr(f_expr, sugar)
+    (find_expr::Expr, T_sym::Symbol) = (choco.starch, choco.slurry)
     Id_sym::Union{Nothing, Symbol} = Core.eval(@__MODULE__, find_expr)
     if Id_sym === nothing
         return nothing
@@ -58,40 +68,34 @@ function _find(f_expr::Expr, expr::Expr)::Union{Nothing, <: ZzzAsset}
     end
 end
 
-function findfirst(expr::Expr)::Union{Nothing, <: ZzzAsset}
-    _find(:(Base.findfirst), expr)
+function findfirst(sugar::Expr)::Union{Nothing, <: ZzzAsset}
+    _find(:(Base.findfirst), sugar)
 end
 
-function findlast(expr::Expr)::Union{Nothing, <: ZzzAsset}
-    _find(:(Base.findlast), expr)
-end
-
-function findall(expr::Expr)::Vector{<: ZzzAsset}
-    f_expr = :(Base.findall)
-    (find_expr, T_sym) = _find_expr(f_expr, expr)
-    T = getfield(Eridu, T_sym)
-    return map(Core.eval(@__MODULE__, find_expr)) do Id_sym
-        T(Id = parseInt(Id_sym))
-    end
+function findlast(sugar::Expr)::Union{Nothing, <: ZzzAsset}
+    _find(:(Base.findlast), sugar)
 end
 
 function findall(query::ZzzQuery{T})::Vector{T} where T <: ZzzAsset
-    tbl = cached(T)
-    Id_syms = Base.findall(tbl) do c
-        if query.logical isa AND
-            all(f -> f(c), query.logical.elements)
-        elseif query.logical isa OR
-            any(f -> f(c), query.logical.elements)
-        end
+    ∀ = if query.logical isa AND
+        all
+    elseif query.logical isa OR
+        any
+    else
+        (_, _) -> false
     end
-    map(Id_syms) do Id_sym
+    Id_syms = Base.findall(cached(T)) do c
+        λ = f -> f(c)
+        ∀(λ, query.logical.elements)
+    end
+    map(Id_syms) do Id_sym::Symbol
         T(Id = parseInt(Id_sym))
     end
 end
 
 function findall(::Type{T})::Vector{T} where T <: ZzzAsset
     Id_syms = (collect ∘ keys ∘ cached)(T)
-    map(Id_syms) do Id_sym
+    map(Id_syms) do Id_sym::Symbol
         T(Id = parseInt(Id_sym))
     end
 end
