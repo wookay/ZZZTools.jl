@@ -16,6 +16,9 @@ expr = :( c::Character -> c.EN == "Venti" )
 expr = :( weapon::Weapon -> weapon.EN == "[Lunar] Pleniluna" )
 @test Eridu.findfirst(expr) == Weapon(Id = 12001)
 
+expr = :( weapon::Weapon -> WeaponType(weapon.type) == Anomaly )
+@test length(Eridu.findall(expr)) >= 13
+
 expr = :( monster::Monster -> monster.EN == "Tyrfing" )
 @test Eridu.findfirst(expr) == Monster(Id = 10000)
 

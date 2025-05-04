@@ -1,5 +1,10 @@
 # module ZZZTools
 
+function Base.show(io::IO, asset::T) where T <: ZzzAsset
+    print(io, nameof(T))
+    print(io, "(Id = ", asset.Id, ")")
+end
+
 function Base.show(io::IO, mime::MIME"text/plain", c::Character)
     T = typeof(c)
     print(io, nameof(T))

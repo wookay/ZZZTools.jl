@@ -15,7 +15,9 @@ parseInt(sym::Symbol)::Int = parse(Int, String(sym))
 
 using ..ZZZTools: ZzzQuery, ZzzAsset
 using ..ZZZTools: AbstractLogicalOperator, AND, OR
-using ..ZZZTools: WeaponType, ElementType, HitType
+using ..ZZZTools: WeaponType, Attack, Stun, Anomaly, Support, Defense
+using ..ZZZTools: HitType, Slash, Strike, Pierce
+using ..ZZZTools: ElementType, Physical, Fire, Ice, Electric, Ether
 using ..ZZZTools: Character, Weapon, Monster, Equipment, Bangboo
 
 _tbl_dict = Dict{Type{<: ZzzAsset}, NamedTuple}()
